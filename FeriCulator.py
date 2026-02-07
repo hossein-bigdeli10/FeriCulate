@@ -12,7 +12,6 @@ def get_history():
 
 def clear_history():
     open("CalHistory.txt", "w").close()
-    pass
 
 
 def show_menu():
@@ -94,41 +93,47 @@ while True:
 
     elif choice == "1":
 
-        print("\n(Example: '5 + 3 =' or 'sqrt 16 =') - Type 'back' to return")
-        user_expr = input("Enter your calculation: ").strip().lower()
+        while True:  # bug fix:# stay in calculator mode until the user returns to the main menu
 
-        if user_expr == "back":  # return to main menu
-            continue
+            print("\n(Example: '5 + 3 =' or 'sqrt 16 =') - Type 'back' to return")
+            user_expr = input("Enter your calculation: ").strip().lower()
 
-        parts = user_expr.split()
+            if user_expr == "back":  # return to main menu
+                break
 
-        try:
-            if not parts:
-                print("Error: Please enter something!")
-                continue
+            operators = ["+", "-", "*", "/", "//", "%", "**", "sqrt"]
+            for op in operators:  # bug fix: add spaces around operators to ensure correct splitting
+                user_expr = user_expr.replace(op, f" {op} ")
 
-            if parts[0] == "sqrt":
-                n1 = float(parts[1])
-                result = calculate(n1, "sqrt")
-                full_record = f"sqrt {n1} = {result}"
-                print(f"sqrt {n1} = {result}")
+            parts = user_expr.split()
 
-            elif len(parts) >= 3:
-                n1 = float(parts[0])
-                op = parts[1]
-                n2 = float(parts[2])
-                result = calculate(n1, op, n2)
-                full_record = f"{n1} {op} {n2} = {result}"
-            else:
-                print("Error: Incomplete expression.")
-                continue
+            try:
+                if not parts:
+                    print("Error: Please enter something!")
+                    continue
 
-            print(f"\n result = {full_record}")
+                if parts[0] == "sqrt":
+                    n1 = float(parts[1])
+                    result = calculate(n1, "sqrt")
+                    full_record = f"sqrt {n1} = {result}"
+                    print(f"sqrt {n1} = {result}")
 
-            with open("CalHistory.txt", "a") as file:
-                file.write(full_record + "\n")
+                elif len(parts) >= 3:
+                    n1 = float(parts[0])
+                    op = parts[1]
+                    n2 = float(parts[2])
+                    result = calculate(n1, op, n2)
+                    full_record = f"{n1} {op} {n2} = {result}"
+                else:
+                    print("Error: Incomplete expression.")
+                    continue
 
-        except (ValueError, IndexError):
-            print("Error: Please follow the format 'num1 op num2' or 'sqrt num'.")
+                print(f"\n result = {full_record}")
+
+                with open("CalHistory.txt", "a") as file:
+                    file.write(full_record + "\n")
+
+            except (ValueError, IndexError):
+                print("Error: Please follow the format 'num1 op num2' or 'sqrt num'.")
     else:
         print("invalid menu option.")
